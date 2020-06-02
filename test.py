@@ -1,63 +1,81 @@
+from locators import Locator as lc
+from loginpage import loginPage
+from homepage import homePage
+from checkout import checkoutPage
 import selenium
 from selenium import webdriver
-import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
 import unittest
-from locators import Locator
 
-
-class amazonTest(unittest.TestCase):
-    #lp=Locator()
+class test_amazon(unittest.TestCase):
     
-    driver=webdriver.Chrome(Locator.PATH)
+    driver=webdriver.Chrome(lc.PATH)
 
     @classmethod
     def setUpClass(cls):
-        cls.driver.get(Locator.URL)
+        cls.driver.get(lc.URL)
         cls.driver.maximize_window()
-
-   # def setUpClass(self):
-    #    self.driver.get(Locator.URL)
-     #   self.driver.maximize_window()
     
-    
-    def test_homepage(self):
-        lc=Locator(self.driver)
-        lc.clickMenu()
-        lc.selectCategory()
-        lc.selectOption()
+    def test_Firstpage(self):
+        print("Testing login page")
+        self.driver.save_screenshot("beforelogin.png")
+        self.assertEqual("Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more",self.driver.title,"webpage is different")
+        signin=loginPage(self.driver)
+        time.sleep(3)
+        signin.login()
+        self.driver.implicitly_wait(5)
+        self.assertTrue(EC.visibility_of_element_located((By.XPATH,lc.checkUserXpath)))
+        self.driver.save_screenshot("afterlogin.png")
+        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH,loginPage.checkUserXpath)))
+        
+    def test_Homepage(self):    
+        print("Testing home page")
+        self.assertEqual("Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more",self.driver.title,"webpage is different")
+        home=homePage(self.driver)
+        home.clickMenu()
+        self.driver.implicitly_wait(2)
+        home.selectCategory()
+        home.selectOption()
+        home.sortbyvalue()
+        self.assertTrue(EC.visibility_of_element_located((By.XPATH,lc.result)))
+        self.driver.save_screenshot("categoryResultHighToLow.png")
+        #self.assertEqual("Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more",self.driver.title,"webpage is different")
+        #self.driver.implicitly_wait(5)
+        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH,home.result)))
+        
 
-        #self.assertEqual(,self.driver.,"webpage title not matching")
+    def test_Lastpage(self):
+        print("Testing Checkoutpage")
+        checkout=checkoutPage(self.driver)
+        parentGUID = self.driver.current_window_handle
+        allresult=checkout.storeResult() 
+        allresult[0].send_keys(Keys.CONTROL + Keys.ENTER)
+        time.sleep(5)
+        self.driver.switch_to_window(self.driver.window_handles[1])
+        checkout.addToCart()
+        time.sleep(3)
+        self.driver.close()
+        self.driver.switch_to_window(parentGUID)
+        time.sleep(3)
+        allresult[1].click()
+        checkout.addToCart()
+        checkout.goToCart()
+        self.assertTrue(EC.visibility_of_element_located((By.XPATH,lc.result)))
+        self.driver.save_screenshot("cartitems.png")
+        time.sleep(15)
+
     @classmethod
     def tearDownClass(cls):
         cls.driver.close()
     
-    #def tearDownClass(self):
-     #   self.driver.close()
+    
 
 if __name__ == "__main__":
     unittest.main()
   
-    
 
-
-#driver= webdriver.Chrome(PATH)
-#driver= webdriver.Chrome(executable_path="C:\Users\u.satish.deshpande\chromedriver.exe")
-#driver.get("https://www.amazon.in")
-#print(driver.title)
-#search = driver.find_element_by_id("0dRlrTqyZcagU2z4nmKwmg")
-#search.send_keys("0dRlrTqyZcagU2z4nmKwmg")
-#search.click()
-#category=driver.find_element_by_id("nav-hamburger-menu")
-#category.click()
-#selectCategory= driver.find_element_by_xpath('//a[contains(., "Mobiles, Computers")]')
-#selectCategory.click()
-#selectCategoryMobile=driver.find_element_by_xpath('//a[contains(., "All Mobile Phones")]')
-#selectCategoryMobile.click()
-#Expensive=driver.find_element_by_xpath('//a[contains(., "25kAbove")]')
-#Expensive.click()
-#sort=driver.find_elements_by_id("sort")
-#drpdown = Select(sort)
-#drpdown.select_by_visible_text("Price: High to Low")
-#drpdown.select_by_value("price-asc-rank")
