@@ -11,14 +11,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import unittest
+import testdata
 
 class test_amazon(unittest.TestCase):
     
-    driver=webdriver.Chrome(lc.PATH)
+    if testdata.browser=="Chrome":
+        driver=webdriver.Chrome(testdata.PATH)
+    else:
+        print("set the browser in testdata")
 
     @classmethod
     def setUpClass(cls):
-        cls.driver.get(lc.URL)
+        cls.driver.get(testdata.URL)
         cls.driver.maximize_window()
     
     def test_Firstpage(self):
@@ -31,8 +35,7 @@ class test_amazon(unittest.TestCase):
         self.driver.implicitly_wait(5)
         self.assertTrue(EC.visibility_of_element_located((By.XPATH,lc.checkUserXpath)))
         self.driver.save_screenshot("afterlogin.png")
-        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH,loginPage.checkUserXpath)))
-        
+       
     def test_Homepage(self):    
         print("Testing home page")
         self.assertEqual("Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more",self.driver.title,"webpage is different")
@@ -44,9 +47,7 @@ class test_amazon(unittest.TestCase):
         home.sortbyvalue()
         self.assertTrue(EC.visibility_of_element_located((By.XPATH,lc.result)))
         self.driver.save_screenshot("categoryResultHighToLow.png")
-        #self.assertEqual("Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more",self.driver.title,"webpage is different")
-        #self.driver.implicitly_wait(5)
-        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH,home.result)))
+       
         
 
     def test_Lastpage(self):
@@ -63,9 +64,10 @@ class test_amazon(unittest.TestCase):
         self.driver.switch_to_window(parentGUID)
         time.sleep(3)
         allresult[1].click()
-        checkout.addToCart()
-        checkout.goToCart()
-        self.assertTrue(EC.visibility_of_element_located((By.XPATH,lc.result)))
+        checkout.addToCart() 
+        CartCount=checkout.goToCart()
+        print(CartCount)
+        self.assertEqual("2",CartCount, "cart count is not 2")
         self.driver.save_screenshot("cartitems.png")
         time.sleep(15)
 

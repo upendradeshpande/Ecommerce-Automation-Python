@@ -7,9 +7,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
-import credentials
+import testdata
+import os
 
 class loginPage(object):
+
+
 
     def __init__(self,driver):
         self.driver=driver
@@ -23,7 +26,7 @@ class loginPage(object):
         email=self.driver.find_elements_by_id(lc.emailId)
         for i in email:
             i.clear()
-            i.send_keys(credentials.username)
+            i.send_keys(testdata.username)
             break
 
         continueButton=self.driver.find_elements_by_id(lc.cont)
@@ -34,7 +37,7 @@ class loginPage(object):
         password=self.driver.find_elements_by_id(lc.passwordId)
         for i in password :    
             i.clear()
-            i.send_keys(credentials.pas)
+            i.send_keys(os.getenv('USERNAME'))
 
         submitButton=self.driver.find_elements_by_id(lc.submitId)
         for i in submitButton:

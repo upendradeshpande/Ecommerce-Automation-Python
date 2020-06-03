@@ -25,4 +25,5 @@ class homePage(object):
     
     def sortbyvalue(self):
         self.driver.find_element_by_id(lc.sortId).click()
-        self.driver.find_element_by_xpath(lc.sortvalue).click()
+        time.sleep(2)
+        self.driver.find_element_by_id(lc.sortvalueId).click()

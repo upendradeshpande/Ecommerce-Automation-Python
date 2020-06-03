@@ -28,9 +28,9 @@ class checkoutPage(object):
             break
         element_present = EC.presence_of_element_located((By.ID, lc.cartId))
         WebDriverWait(self.driver, 10).until(element_present)
-
+        
     def goToCart(self):
-        car=self.driver.find_elements_by_id(lc.cartId)
-        car[0].click()
-        self.driver.implicitly_wait(5)
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, lc.cartresultId)))
+        count=self.driver.find_element_by_id(lc.cartcount).text
+        return count
+
+        
